@@ -10,7 +10,6 @@ html, body, #root {
   height: 100%;
   margin: 0;
 }
-
 /* Reserve bottom space for the fixed player:
    Adjust selector to match your top-level container if needed.
    Common app root wrapper selectors: .app-content, main, .page-content
