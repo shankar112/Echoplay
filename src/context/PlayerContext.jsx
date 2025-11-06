@@ -1,108 +1,74 @@
 // src/context/PlayerContext.jsx
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useState, useEffect, useRef, useCallback } from "react";
 import useAudio from "../hooks/useAudio";
 import sampleSongs from "../data/songs.json";
 
 export const PlayerContext = createContext();
 
 export function PlayerProvider({ children }) {
-  const audio = useAudio();
+  const audio = useAudio(); // audio.audio is a real audio element
   const [queue, setQueue] = useState(sampleSongs || []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const positionRef = useRef(0);
 
-  // playIndex uses current audio ref and updates state
-  function playIndex(index) {
+  // Play a track at given index
+  const playIndex = useCallback((index) => {
+    if (!queue || queue.length === 0) return;
     const track = queue[index];
     if (!track) return;
     audio.setSrc(track.audio);
-    audio
-      .play()
-      .catch(() => {
-        // ignore play errors (autoplay / user gesture)
-      });
+    audio.play().catch(() => {});
     setCurrentIndex(index);
     setIsPlaying(true);
-  }
+  }, [audio, queue]);
 
-  function togglePlay() {
+  const togglePlay = useCallback(() => {
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio
-        .play()
-        .catch(() => {
-          /* ignore */
-        });
+      audio.play().catch(() => {});
       setIsPlaying(true);
     }
-  }
+  }, [audio, isPlaying]);
 
-  function handleNext() {
+  const handleNext = useCallback(() => {
     if (!queue || queue.length === 0) return;
     const next = (currentIndex + 1) % queue.length;
     playIndex(next);
-  }
+  }, [queue, currentIndex, playIndex]);
 
-  function handlePrev() {
+  const handlePrev = useCallback(() => {
     if (!queue || queue.length === 0) return;
     const prev = (currentIndex - 1 + queue.length) % queue.length;
     playIndex(prev);
-  }
+  }, [queue, currentIndex, playIndex]);
 
-  // Attach DOM audio events in a robust way
+  // Attach DOM audio events only when audio exists
   useEffect(() => {
     const a = audio?.audio;
-    if (!a) {
-      console.debug("PlayerContext: audio not available yet", audio);
-      return;
-    }
-
-    // Debugging info (remove later)
-    // console.debug("PlayerContext: audio shape", { a, hasAdd: typeof a.addEventListener === "function" });
+    if (!a) return;
 
     const onEnded = () => {
-      if (queue.length > 0) {
+      if (queue && queue.length > 0) {
         const next = (currentIndex + 1) % queue.length;
         playIndex(next);
       }
     };
 
     const onTime = () => {
-      if (typeof a.currentTime === "number") {
-        positionRef.current = a.currentTime;
-      }
+      positionRef.current = a.currentTime;
     };
 
-    const isHtmlAudio = typeof a.addEventListener === "function";
-
-    if (isHtmlAudio) {
-      a.addEventListener("ended", onEnded);
-      a.addEventListener("timeupdate", onTime);
-    } else {
-      // fallback: set handlers directly if supported
-      try {
-        a.onended = onEnded;
-        a.ontimeupdate = onTime;
-      } catch (e) {
-        console.warn("PlayerContext: audio object doesn't support addEventListener or onended - event wiring skipped", e);
-      }
-    }
+    a.addEventListener("ended", onEnded);
+    a.addEventListener("timeupdate", onTime);
 
     return () => {
-      if (isHtmlAudio) {
-        a.removeEventListener("ended", onEnded);
-        a.removeEventListener("timeupdate", onTime);
-      } else {
-        try {
-          if (a.onended === onEnded) a.onended = null;
-          if (a.ontimeupdate === onTime) a.ontimeupdate = null;
-        } catch (e) {}
-      }
+      a.removeEventListener("ended", onEnded);
+      a.removeEventListener("timeupdate", onTime);
     };
-  }, [audio, queue, currentIndex]); // keep these deps so we respond to index/queue changes
+  }, [audio, queue, currentIndex, playIndex]);
 
   return (
     <PlayerContext.Provider

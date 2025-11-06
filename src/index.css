@@ -1,3 +1,24 @@
-:root { --bg: #0f1720; --text: #e6eef8; }
-html,body,#root { height:100%; margin:0; }
-body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:var(--text); }
+/* Add to your global CSS (src/index.css or similar) */
+
+/* make sure this variable matches footer-player.css */
+:root {
+  --footer-height: 84px;
+}
+
+/* Ensure root/full height */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Reserve bottom space for the fixed player:
+   Adjust selector to match your top-level container if needed.
+   Common app root wrapper selectors: .app-content, main, .page-content
+*/
+main, .app-content, .page-content, #root > div {
+  padding-bottom: calc(var(--footer-height) + 20px);
+}
+
+/* If your app uses a dedicated .app container, prefer that selector instead:
+.app-content { padding-bottom: calc(var(--footer-height) + 20px); }
+*/

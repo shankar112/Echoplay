@@ -2,76 +2,60 @@
 import { useEffect, useRef, useCallback } from "react";
 
 export default function useAudio() {
-  const audioRef = useRef(null);
+  // Create the audio element synchronously (so consumers can use it immediately)
+  const audioRef = useRef(typeof window !== "undefined" ? document.createElement("audio") : null);
 
-  // Ensure the audio element exists synchronously so consumers can use it
-  if (!audioRef.current && typeof window !== "undefined") {
-    const a = document.createElement("audio");
-    a.preload = "metadata";
-    audioRef.current = a;
-  }
-
+  // Configure audio element once on mount
   useEffect(() => {
-    // Optional: you can keep this effect for cleanup if you prefer
+    const a = audioRef.current;
+    if (!a) return;
+
+    a.preload = "metadata";
+    // keep the element alive across component unmounts so player persists
     return () => {
-      // If you want to cleanup on unmount, uncomment:
-      // if (audioRef.current) {
-      //   audioRef.current.pause();
-      //   audioRef.current.src = "";
-      // }
+      // Optionally pause on unmount:
+      // try { a.pause(); } catch (e) {}
     };
   }, []);
 
   const setSrc = useCallback((src) => {
     const a = audioRef.current;
-    if (!a || !src) return;
+    if (!a) return;
     try {
       const newHref = new URL(src, window.location.href).href;
-      if (a.src !== newHref) {
-        a.src = src;
-      }
-    } catch (err) {
-      // if src is relative or invalid, still set
-      a.src = src;
+      if (a.src !== newHref) a.src = src;
+    } catch (e) {
+      // fallback if src is already absolute or URL() fails
+      if (a.src !== src) a.src = src;
     }
   }, []);
 
   const play = useCallback(() => {
     const a = audioRef.current;
-    if (!a) return Promise.reject(new Error("No audio element"));
-    try {
-      return a.play();
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    if (!a) return Promise.reject();
+    return a.play();
   }, []);
 
   const pause = useCallback(() => {
     const a = audioRef.current;
     if (!a) return;
-    try {
-      a.pause();
-    } catch (_) {}
+    a.pause();
   }, []);
 
   const seek = useCallback((t) => {
     const a = audioRef.current;
     if (!a) return;
-    try {
-      a.currentTime = t;
-    } catch (_) {}
+    a.currentTime = t;
   }, []);
 
   const setVolume = useCallback((v) => {
     const a = audioRef.current;
     if (!a) return;
-    try {
-      a.volume = Math.max(0, Math.min(1, v));
-    } catch (_) {}
+    a.volume = Math.max(0, Math.min(1, v));
   }, []);
 
   return {
-    audio: audioRef.current,
+    audio: audioRef.current || null,
     setSrc,
     play,
     pause,
