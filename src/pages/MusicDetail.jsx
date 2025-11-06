@@ -1,13 +1,14 @@
+// src/pages/MusicDetail.jsx
 import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Typography, Button, Grid } from "@mui/material";
 import songs from "../data/songs.json";
 import { PlayerContext } from "../context/PlayerContext";
+import { Box, Typography, Button, Grid } from "@mui/material";
 
 export default function MusicDetail() {
   const { id } = useParams();
   const track = songs.find(s => s.id === id);
-  const { playIndex, queue, setQueue, enqueue } = useContext(PlayerContext);
+  const { queue, setQueue, playIndex } = useContext(PlayerContext);
 
   if (!track) return <Typography>Track not found.</Typography>;
 
@@ -20,23 +21,22 @@ export default function MusicDetail() {
       </Grid>
       <Grid item md={8}>
         <Typography variant="h4">{track.title}</Typography>
-        <Typography variant="subtitle1">{track.artist}</Typography>
-        <Typography paragraph>{track.description || "No description provided."}</Typography>
+        <Typography variant="subtitle1" color="text.secondary">{track.artist}</Typography>
+        <Typography paragraph>{track.description || track.credits || ""}</Typography>
 
         <Box sx={{ display: "flex", gap: 1 }}>
-          <Button variant="contained" color="primary" onClick={() => {
-            if (idx >= 0) {
-              playIndex(idx);
-            } else {
-              setQueue((q) => {
-                const newQ = [track, ...q];
-                setTimeout(() => playIndex(0), 50);
-                return newQ;
+          <Button variant="contained" onClick={() => {
+            if (idx >= 0) playIndex(idx);
+            else {
+              setQueue(prev => {
+                const next = [track, ...prev];
+                setTimeout(() => playIndex(0), 60);
+                return next;
               });
             }
           }}>Play Now</Button>
 
-          <Button variant="outlined" onClick={() => enqueue(track)}>Add to Queue</Button>
+          <Button variant="outlined" onClick={() => setQueue(prev => [...prev, track])}>Add to Queue</Button>
         </Box>
       </Grid>
     </Grid>
