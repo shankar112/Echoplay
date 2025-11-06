@@ -1,0 +1,134 @@
+/* src/components/footer-player.css */
+
+:root {
+  --footer-height: 84px; /* keep in sync with global padding */
+}
+
+/* Footer wrapper */
+.footer-player {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 18px;
+  background: linear-gradient(180deg, #2b3338, #23292d);
+  color: #e6eef8;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(255,255,255,0.02);
+
+  /* fixed and sized using the CSS variable */
+  position: fixed;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  height: var(--footer-height);
+  min-height: var(--footer-height);
+  border-radius: 12px;
+  z-index: 1200;
+  align-items: center;
+}
+
+/* Left area: title + artist */
+.fp-left {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  max-width: 36%;
+  overflow: hidden;
+}
+
+.fp-title {
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fp-artist {
+  font-size: 0.85rem;
+  color: rgba(230,238,248,0.72);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Controls */
+.fp-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 140px;
+}
+
+.fp-btn {
+  background: transparent;
+  border: none;
+  color: #e6eef8;
+  font-size: 1.15rem;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background .12s ease;
+}
+
+.fp-btn:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.fp-btn.play {
+  background: linear-gradient(180deg,#2dbb5b,#14a74a);
+  color: white;
+  padding: 8px 12px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+/* timeline / progress */
+.fp-timeline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.fp-time-left, .fp-time-right {
+  font-size: 0.85rem;
+  color: rgba(230,238,248,0.88);
+  min-width: 46px;
+  text-align: center;
+}
+
+.fp-bar {
+  height: 10px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 999px;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.fp-progress {
+  height: 100%;
+  background: linear-gradient(90deg,#21b36b,#14a74a);
+  width: 0%;
+  transition: width .12s linear;
+}
+
+/* responsive */
+@media (max-width: 880px) {
+  .fp-left { min-width: 140px; max-width: 45%; }
+  .fp-controls { min-width: 110px; gap: 6px; }
+}
+
+@media (max-width: 520px) {
+  :root { --footer-height: 72px; }
+  .footer-player { left: 10px; right: 10px; bottom: 10px; padding: 8px; gap: 10px; border-radius: 10px; }
+  .fp-left { min-width: 90px; max-width: 40%; }
+  .fp-time-left, .fp-time-right { display: none; }
+}

@@ -1,30 +1,65 @@
-// basic single audio element manager
-import { useEffect, useRef } from "react";
+// src/hooks/useAudio.js
+import { useEffect, useRef, useCallback } from "react";
 
 export default function useAudio() {
-  const ref = useRef(null);
+  // Create the audio element synchronously (so consumers can use it immediately)
+  const audioRef = useRef(typeof window !== "undefined" ? document.createElement("audio") : null);
 
-  if (!ref.current) {
-    ref.current = new Audio();
-    ref.current.preload = "metadata";
-    ref.current.crossOrigin = "anonymous";
-  }
-
+  // Configure audio element once on mount
   useEffect(() => {
-    const audio = ref.current;
+    const a = audioRef.current;
+    if (!a) return;
+
+    a.preload = "metadata";
+    // keep the element alive across component unmounts so player persists
     return () => {
-      audio.pause();
-      audio.src = "";
+      // Optionally pause on unmount:
+      // try { a.pause(); } catch (e) {}
     };
   }, []);
 
+  const setSrc = useCallback((src) => {
+    const a = audioRef.current;
+    if (!a) return;
+    try {
+      const newHref = new URL(src, window.location.href).href;
+      if (a.src !== newHref) a.src = src;
+    } catch (e) {
+      // fallback if src is already absolute or URL() fails
+      if (a.src !== src) a.src = src;
+    }
+  }, []);
+
+  const play = useCallback(() => {
+    const a = audioRef.current;
+    if (!a) return Promise.reject();
+    return a.play();
+  }, []);
+
+  const pause = useCallback(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.pause();
+  }, []);
+
+  const seek = useCallback((t) => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.currentTime = t;
+  }, []);
+
+  const setVolume = useCallback((v) => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.volume = Math.max(0, Math.min(1, v));
+  }, []);
+
   return {
-    get audio() { return ref.current; },
-    setSrc: (src) => { ref.current.src = src; },
-    play: () => ref.current.play(),
-    pause: () => ref.current.pause(),
-    seek: (t) => { ref.current.currentTime = t; },
-    setVolume: (v) => { ref.current.volume = v; },
-    on: (event, cb) => { ref.current[`on${event}`] = cb; },
+    audio: audioRef.current || null,
+    setSrc,
+    play,
+    pause,
+    seek,
+    setVolume,
   };
 }
