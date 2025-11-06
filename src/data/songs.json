@@ -1,0 +1,68 @@
+[
+  {
+    "id": "s001",
+    "title": "Sunset Drive",
+    "artist": "Neon Skies",
+    "albumId": "a01",
+    "duration": 195,
+    "audio": "/audio/sunset-drive.mp3",
+    "cover": "/images/a01.jpg",
+    "genre": "chill",
+    "description": "Chill synthwave loop — CC0 / Pixabay (for dev demo)."
+  },
+  {
+    "id": "s002",
+    "title": "Night City",
+    "artist": "Nova Pulse",
+    "albumId": "a02",
+    "duration": 215,
+    "audio": "/audio/night-city.mp3",
+    "cover": "/images/a02.jpg",
+    "genre": "electronic",
+    "description": "Upbeat electronic loop — CC0 / Pixabay (for dev demo)."
+  },
+  {
+    "id": "s003",
+    "title": "Lounge Loop",
+    "artist": "Soft Table",
+    "albumId": "a03",
+    "duration": 160,
+    "audio": "/audio/lounge-loop-01.mp3",
+    "cover": "/images/a03.jpg",
+    "genre": "lounge",
+    "description": "Calm lounge bed for background ambience."
+  },
+  {
+    "id": "s004",
+    "title": "City Walk",
+    "artist": "Daytone",
+    "albumId": "a04",
+    "duration": 180,
+    "audio": "/audio/city-walk.mp3",
+    "cover": "/images/a04.jpg",
+    "genre": "downtempo",
+    "description": "Minimal downtempo loop."
+  },
+  {
+    "id": "s005",
+    "title": "Morning Coffee",
+    "artist": "Soft Steps",
+    "albumId": "a05",
+    "duration": 150,
+    "audio": "/audio/morning-coffee.mp3",
+    "cover": "/images/a05.jpg",
+    "genre": "acoustic",
+    "description": "Light acoustic loop for demos."
+  },
+  {
+    "id": "s006",
+    "title": "Neon Drive II",
+    "artist": "Neon Skies",
+    "albumId": "a01",
+    "duration": 200,
+    "audio": "/audio/neon-drive-ii.mp3",
+    "cover": "/images/a06.jpg",
+    "genre": "synthwave",
+    "description": "Extended synthwave loop (dev demo)."
+  }
+]
