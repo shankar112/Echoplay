@@ -4,7 +4,17 @@ import { Card, CardMedia, CardContent, Typography, Button, Box } from "@mui/mate
 
 export default function TrackCard({ track, onPlay=()=>{}, onOpen=()=>{} }) {
   return (
-    <Card sx={{ width: 220, borderRadius: 2, overflow: "hidden" }}>
+    <Card
+      sx={{
+        width: 220,
+        borderRadius: 2,
+        overflow: "hidden",
+        // Ensure the card's front face is used and the backface is hidden when rotated
+        transformStyle: "preserve-3d",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+      }}
+    >
       <CardMedia
         component="img"
         height="140"
